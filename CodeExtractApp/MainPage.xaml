@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel ="clr-namespace:CodeExtractApp.ViewModel"
+             xmlns:cvt ="clr-namespace:CodeExtractApp.Convert"
+             x:DataType="viewmodel:MainPageModel"
+             x:Class="CodeExtractApp.MainPage">
+
+    <ContentPage.Resources>
+        <cvt:RegexCommentConverter x:Key="regexConvert"/>
+    </ContentPage.Resources>
+
+    
+    <VerticalStackLayout
+            Spacing="25"
+            Padding="30,0"
+            VerticalOptions="Center">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="6*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Text="源代码所在目录" Grid.Row="0" Grid.Column="0"/>
+            <Entry Text="{Binding Input}" Placeholder="请选择源代码所在目录" Grid.Row="0" Grid.Column="1" IsReadOnly="True"/>
+            <Button x:Name="btnSource" Text="请选择目录" Grid.Row="0" Grid.Column="2" Clicked="btnSource_Clicked"/>
+
+            <Label Text="目标文件" Grid.Row="1" Grid.Column="0"/>
+            <Entry Text="{Binding Output}" Placeholder="请选择目标文件" Grid.Row="1" Grid.Column="1" IsReadOnly="True"/>
+            <Button x:Name="btnDest" Text="请选择文件" Grid.Row="1" Grid.Column="2" Clicked="btnDest_Clicked"/>
+
+            <Label Text="文件名正则表达式" Grid.Row="2" Grid.Column="0"/>
+            <Entry Text="{Binding Extension}" Grid.Row="2" Grid.Column="1"/>
+
+            <Label Text="请选择类型" Grid.Row="3"/>
+            <ListView Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding Items}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type viewmodel:RegexSource}">
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="8*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding IsSelected}" Grid.Column="0"></CheckBox>
+                                <Label Grid.Column="1" Text="{Binding Path=Value,Mode=OneWay,Converter={StaticResource regexConvert}}"></Label>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+
+        <Button
+                x:Name="btnOk"
+                Text="导出代码"
+                SemanticProperties.Hint="Counts the number of times you click"
+                Clicked="btnOk_Clicked"
+                HorizontalOptions="Center"/>
+
+    </VerticalStackLayout>
+
+</ContentPage>
