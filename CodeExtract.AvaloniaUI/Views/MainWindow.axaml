@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CodeExtract.AvaloniaUI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CodeExtract.AvaloniaUI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="CodeExtract.AvaloniaUI">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="Grid > TextBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        
+        <Style Selector="Grid > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    
+        <Style Selector="Grid > Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    
+        <Style Selector="Grid > Button">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        
+        <Style Selector="Grid > ListBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        
+        <Style Selector="Grid > StackPanel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        
+        <Style Selector="Grid > StackPanel > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*, Auto" Margin="5">
+        <Grid DockPanel.Dock="Top" Margin="40" ColumnDefinitions="Auto, 5*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+            <Label Grid.Row="0" Grid.Column="0" >源代码目录</Label>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}"></TextBox>
+            <Button Grid.Row="0" Grid.Column="2" Command="{Binding SelectSourceFolderCommand}">选择源代码文件夹</Button>
+
+            <Label Grid.Row="1" Grid.Column="0" >目标代码目录</Label>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Dest}" ></TextBox>
+            <Button Grid.Row="1" Grid.Column="2" Command="{Binding SelectDestFolderCommand}">选择目标文件夹</Button>
+            
+            <Label Grid.Row="2" Grid.Column="0">输出模式</Label>
+            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding Path=SingleFile}">单文件</CheckBox>
+            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Vertical">
+                <TextBlock TextWrapping="Wrap">若选择单文件模式,所有代码都在目标代码目录下的 result 文件下, 以达到3000行代码的所在文件为终点(为确保不出现不完整的代码块,包含该文件中的所有代码)</TextBlock>
+                <TextBlock TextWrapping="Wrap">若未选择单文件模式, 所有代码都将被去除注释, 并按原有文件目录的结构保存</TextBlock>
+            </StackPanel>
+            
+            
+            <Label Grid.Row="3" Grid.Column="0">源代码文件扩展名</Label>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Extension}"></TextBox>
+            <TextBlock Grid.Row="3" Grid.Column="2" 
+                       Margin="5"
+                       TextWrapping="Wrap">
+                例如java代码,填写"java", C#代码文件填写"cs", html文件填写"html", 不需要"."
+            </TextBlock>
+            
+            <Label Grid.Row="4" Grid.Column="0">注释器应用</Label>
+            <ListBox Grid.Row="4" 
+                     Grid.Column="1" 
+                     Grid.ColumnSpan="2"
+                     SelectionMode="Multiple"
+                     ItemsSource="{Binding Items}"
+                     >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Blue" BorderThickness="1" 
+                                CornerRadius="4" Padding="4">
+                            <CheckBox Content="{Binding Comment.Name}" 
+                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                      Margin="5"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        
+        <!-- 底部区域 -->
+        <StackPanel Grid.Row="1" Margin="40">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Left">
+                <Run Text="目前支持清除四种代码和注释, 选中的注释器才会被应用：" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 空白行</TextBlock>
+            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• html注释(&lt;!-- 注释内容 --&gt;)</TextBlock>
+            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 多行注释(/* 注释内容 */)</TextBlock>
+            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 单行注释(//注释内容)</TextBlock>
+            
+            
+        </StackPanel>
+        
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 20, 0, 40">
+            <Button Command="{Binding CleanCommand}">清理注释</Button>
+        </StackPanel>
+    </Grid>
+
+</Window>

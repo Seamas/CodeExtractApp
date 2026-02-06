@@ -13,48 +13,62 @@ public class CodeExtract
     /// <param name="regexComments">需要移除的注释</param>
     /// <param name="extension">扩展名, 默认 *.java</param>
     /// <param name="limit">行数, 3000</param>
-    public static void Extract(string path, string output, IEnumerable<IRegexComment>? regexComments, string extension = "*.java", int limit = 3000)
+    public static async Task ExtractSingleFileAsync(string path, string output, IEnumerable<IRegexComment> regexComments, string extension, int limit = 3000)
     {
-        if (regexComments == null)
-        {
-            var list = new List<IRegexComment>();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                var comments = assembly.GetTypes()
-                    .Where(item => item.IsClass && item.IsAssignableTo(typeof(IRegexComment)))
-                    .Select(item => Activator.CreateInstance(item) as IRegexComment)
-                    .ToList();
-                list.AddRange(comments!);
-            }
-
-            regexComments = list;
-        }
-
-        var regexes = regexComments.Where(item => item != null)
+        
+        var regexes = regexComments
             .OrderBy(item => item!.Order)
             .ToList();
-
-
+        
         var directory = new DirectoryInfo(path);
-        var fileInfos = directory.GetFiles(extension, SearchOption.AllDirectories);
+        var fileInfos = directory.GetFiles("*" + extension, SearchOption.AllDirectories);
 
         var index = 0;
-        using var sw = File.AppendText(output);
+        await using var sw = File.AppendText(output);
+        
         foreach (var fileInfo in fileInfos)
         {
-            var text = File.ReadAllText(fileInfo.FullName).RemoveComment(regexes!);
+            var originText = await File.ReadAllTextAsync(fileInfo.FullName);
+            var text = originText.RemoveComment(regexes);
+            
             var strings = text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var str in strings)
             {
-                sw.WriteLine(str);
+                await sw.WriteLineAsync(str);
                 index++;
             }
 
+            // 确保整个文件写完, 再跳出循环, 可以保证源代码中方法是完整的
             if (index >= limit)
             {
                 return;
             }
+        }
+    }
+
+
+    public static async Task ExtractMultipleFilesAsync(string input, string output, IEnumerable<IRegexComment> regexComments, string extension)
+    {
+        var regexes = regexComments
+            .OrderBy(item => item.Order)
+            .ToList();
+        
+        var directory = new DirectoryInfo(input);
+        var fileInfos = directory.GetFiles("*" + extension, SearchOption.AllDirectories);
+        foreach (var fileInfo in fileInfos)
+        {
+            var newFilePath = Path.Combine(output, fileInfo.Name);
+
+            var directoryName = Path.GetDirectoryName(newFilePath);
+            if (!string.IsNullOrEmpty(directoryName))
+            {
+                Directory.CreateDirectory(directoryName);
+            }
+
+            var originText = await File.ReadAllTextAsync(fileInfo.FullName);
+            var text = originText.RemoveComment(regexes);
+            await File.WriteAllTextAsync(newFilePath, text);
         }
     }
 }
