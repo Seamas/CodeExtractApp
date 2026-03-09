@@ -55,20 +55,44 @@ public class CodeExtract
             .ToList();
         
         var directory = new DirectoryInfo(input);
+        
         var fileInfos = directory.GetFiles("*" + extension, SearchOption.AllDirectories);
-        foreach (var fileInfo in fileInfos)
+
+        var parallelOptions = new ParallelOptions()
         {
-            var newFilePath = Path.Combine(output, fileInfo.Name);
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
 
-            var directoryName = Path.GetDirectoryName(newFilePath);
-            if (!string.IsNullOrEmpty(directoryName))
+        await Parallel.ForEachAsync(fileInfos, parallelOptions, async (fileInfo, cancellationToken) =>
+        {
+            try
             {
-                Directory.CreateDirectory(directoryName);
+                await ProcessSingleFileAsync(fileInfo, input, output, regexes, cancellationToken);
             }
+            catch (Exception ex)
+            {
+                await Console.Error.WriteLineAsync($"处理文件 {fileInfo.FullName} 时出错: {ex.Message}");
+            }
+        });
+    }
 
-            var originText = await File.ReadAllTextAsync(fileInfo.FullName);
-            var text = originText.RemoveComment(regexes);
-            await File.WriteAllTextAsync(newFilePath, text);
+
+    private static async Task ProcessSingleFileAsync(FileInfo fileInfo, string input, string output, List<IRegexComment> regexes,
+        CancellationToken cancellationToken)
+    {
+        // 使用相对路径, 保持原始目录结构
+        var relativePath = Path.GetRelativePath(input, fileInfo.FullName);
+        var newFilePath = Path.Combine(output, relativePath);
+
+        // 确保输出目录存在
+        var directoryName = Path.GetDirectoryName(newFilePath);
+        if (!string.IsNullOrEmpty(directoryName))
+        {
+            Directory.CreateDirectory(directoryName);
         }
+
+        var originText = await File.ReadAllTextAsync(fileInfo.FullName, cancellationToken);
+        var text = originText.RemoveComment(regexes);
+        await File.WriteAllTextAsync(newFilePath, text, cancellationToken);
     }
 }
