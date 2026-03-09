@@ -3,115 +3,443 @@
         xmlns:vm="using:CodeExtract.AvaloniaUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="800"
         x:Class="CodeExtract.AvaloniaUI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="CodeExtract.AvaloniaUI">
+        Icon="/Assets/app-icon.ico"
+        Title="代码提取工具"
+        MinWidth="800"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+
     <Window.Styles>
-        <Style Selector="Grid > TextBox">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
+        <!-- 全局样式 -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#333333"/>
         </Style>
         
-        <Style Selector="Grid > TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-    
-        <Style Selector="Grid > Label">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-    
-        <Style Selector="Grid > Button">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
+        <!-- 标题样式 -->
+        <Style Selector="TextBlock.title">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
         </Style>
         
-        <Style Selector="Grid > ListBox">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
+        <!-- 副标题样式 -->
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#7F8C8D"/>
         </Style>
         
-        <Style Selector="Grid > StackPanel">
+        <!-- 标签样式 -->
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#34495E"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
         </Style>
         
-        <Style Selector="Grid > StackPanel > TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <!-- 输入框样式 -->
+        <Style Selector="TextBox.input">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        
+        <!-- 按钮样式 - 主要 -->
+        <Style Selector="Button.primary">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="20,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Background" Value="#2980B9"/>
+        </Style>
+        
+        <!-- 按钮样式 - 次要 -->
+        <Style Selector="Button.secondary">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Foreground" Value="#34495E"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.secondary:pointerover">
+            <Setter Property="Background" Value="#D5DBDB"/>
+        </Style>
+        
+        <!-- 按钮样式 - 成功 -->
+        <Style Selector="Button.success">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="40,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#27AE60"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.success:pointerover">
+            <Setter Property="Background" Value="#229954"/>
+        </Style>
+        
+        <!-- 复选框样式 -->
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#34495E"/>
+        </Style>
+        
+        <!-- 卡片样式 -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#E8E8E8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="BoxShadow" Value="0 2 8 0 #20000000"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        
+        <!-- 注释器项目样式 -->
+        <Style Selector="Border.comment-item">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
             <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style Selector="Border.comment-item:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+            <Setter Property="BorderBrush" Value="#3498DB"/>
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*, Auto" Margin="5">
-        <Grid DockPanel.Dock="Top" Margin="40" ColumnDefinitions="Auto, 5*, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
-            <Label Grid.Row="0" Grid.Column="0" >源代码目录</Label>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}"></TextBox>
-            <Button Grid.Row="0" Grid.Column="2" Command="{Binding SelectSourceFolderCommand}">选择源代码文件夹</Button>
-
-            <Label Grid.Row="1" Grid.Column="0" >目标代码目录</Label>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Dest}" ></TextBox>
-            <Button Grid.Row="1" Grid.Column="2" Command="{Binding SelectDestFolderCommand}">选择目标文件夹</Button>
-            
-            <Label Grid.Row="2" Grid.Column="0">输出模式</Label>
-            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding Path=SingleFile}">单文件</CheckBox>
-            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Vertical">
-                <TextBlock TextWrapping="Wrap">若选择单文件模式,所有代码都在目标代码目录下的 result 文件下, 以达到3000行代码的所在文件为终点(为确保不出现不完整的代码块,包含该文件中的所有代码)</TextBlock>
-                <TextBlock TextWrapping="Wrap">若未选择单文件模式, 所有代码都将被去除注释, 并按原有文件目录的结构保存</TextBlock>
-            </StackPanel>
-            
-            
-            <Label Grid.Row="3" Grid.Column="0">源代码文件扩展名</Label>
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Extension}"></TextBox>
-            <TextBlock Grid.Row="3" Grid.Column="2" 
-                       Margin="5"
-                       TextWrapping="Wrap">
-                例如java代码,填写"java", C#代码文件填写"cs", html文件填写"html", 不需要"."
-            </TextBlock>
-            
-            <Label Grid.Row="4" Grid.Column="0">注释器应用</Label>
-            <ListBox Grid.Row="4" 
-                     Grid.Column="1" 
-                     Grid.ColumnSpan="2"
-                     SelectionMode="Multiple"
-                     ItemsSource="{Binding Items}"
-                     >
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="Blue" BorderThickness="1" 
-                                CornerRadius="4" Padding="4">
-                            <CheckBox Content="{Binding Comment.Name}" 
-                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                      Margin="5"/>
+    <Grid Background="#F5F7FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- 标题栏 -->
+        <Border Grid.Row="0" 
+                Height="70"
+                BoxShadow="0 2 10 0 #30000000">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="#667EEA"/>
+                    <GradientStop Offset="1" Color="#764BA2"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid ColumnDefinitions="Auto,*">
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            Margin="25,0"
+                            VerticalAlignment="Center">
+                    <!-- 应用图标 -->
+                    <Border Width="40" 
+                            Height="40" 
+                            CornerRadius="8"
+                            Background="White"
+                            Margin="0,0,15,0">
+                        <TextBlock Text="&#xE943;" 
+                                   FontFamily="Segoe UI Symbol"
+                                   FontSize="20"
+                                   Foreground="#667EEA"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="代码提取工具" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   Foreground="White"/>
+                        <TextBlock Text="软著申请代码导出助手" 
+                                   FontSize="12" 
+                                   Foreground="#E0E0E0"
+                                   Opacity="0.9"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- 主内容区 -->
+        <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="0,0,0,0">
+            <StackPanel Margin="20,15">
+                
+                <!-- 路径配置卡片 -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="&#xE8B7;" 
+                                       FontFamily="Segoe UI Symbol"
+                                       FontSize="18"
+                                       Foreground="#3498DB"
+                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="路径配置" 
+                                       Classes="title"
+                                       FontSize="16"/>
+                        </StackPanel>
+                        
+                        <Grid ColumnDefinitions="120,*,Auto" RowDefinitions="Auto,Auto" Margin="0,10">
+                            <!-- 源代码目录 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Classes="label" 
+                                       Text="源代码目录"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                                     Classes="input"
+                                     Text="{Binding Path=Source}"
+                                     Watermark="请选择源代码文件夹路径"/>
+                            <Button Grid.Row="0" Grid.Column="2" 
+                                    Classes="secondary"
+                                    Margin="10,0,0,0"
+                                    Command="{Binding SelectSourceFolderCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8B7;" 
+                                               FontFamily="Segoe UI Symbol"
+                                               Margin="0,0,5,0"/>
+                                    <TextBlock Text="浏览"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <!-- 目标代码目录 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                       Classes="label" 
+                                       Text="目标代码目录"
+                                       Margin="0,15,0,0"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" 
+                                     Classes="input"
+                                     Margin="0,15,0,0"
+                                     Text="{Binding Path=Dest}"
+                                     Watermark="请选择输出文件夹路径"/>
+                            <Button Grid.Row="1" Grid.Column="2" 
+                                    Classes="secondary"
+                                    Margin="10,15,0,0"
+                                    Command="{Binding SelectDestFolderCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8B7;" 
+                                               FontFamily="Segoe UI Symbol"
+                                               Margin="0,0,5,0"/>
+                                    <TextBlock Text="浏览"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 输出配置卡片 -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="&#xE9F5;" 
+                                       FontFamily="Segoe UI Symbol"
+                                       FontSize="18"
+                                       Foreground="#E74C3C"
+                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="输出配置" 
+                                       Classes="title"
+                                       FontSize="16"/>
+                        </StackPanel>
+                        
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" Margin="0,10">
+                            <!-- 文件扩展名 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Classes="label" 
+                                       Text="文件扩展名"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1">
+                                <TextBox Classes="input"
+                                         Width="150"
+                                         HorizontalAlignment="Left"
+                                         Text="{Binding Extension}"
+                                         Watermark="如: java, cs, html"/>
+                                <TextBlock Text="例如: java代码填写&quot;java&quot;, C#代码填写&quot;cs&quot;, HTML填写&quot;html&quot; (不需要点号)"
+                                           FontSize="12"
+                                           Foreground="#7F8C8D"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                            
+                            <!-- 输出模式 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                       Classes="label" 
+                                       Text="输出模式"
+                                       Margin="0,15,0,0"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,15,0,0">
+                                <CheckBox IsChecked="{Binding Path=SingleFile}"
+                                          Content="单文件模式"
+                                          FontSize="14"/>
+                                <Border Background="#FFF3CD" 
+                                        BorderBrush="#FFEAA7" 
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="12,10"
+                                        Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="&#xE946;" 
+                                                       FontFamily="Segoe UI Symbol"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#856404"
+                                                       Margin="0,0,5,0"/>
+                                            <TextBlock Text="单文件模式说明" 
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#856404"
+                                                       Margin="0,0,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="所有代码合并到目标目录下的 result 文件中，以3000行代码为终点（确保不出现不完整的代码块）"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="#856404"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Background="#D1ECF1" 
+                                        BorderBrush="#BEE5EB" 
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="12,10"
+                                        Margin="0,8,0,0">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="&#xE946;" 
+                                                       FontFamily="Segoe UI Symbol"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#0C5460"
+                                                       Margin="0,0,5,0"/>
+                                            <TextBlock Text="多文件模式说明" 
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#0C5460"
+                                                       Margin="0,0,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="所有代码去除注释后，按原有文件目录结构保存"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="#0C5460"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 注释器配置卡片 -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="&#xE8F0;" 
+                                       FontFamily="Segoe UI Symbol"
+                                       FontSize="18"
+                                       Foreground="#9B59B6"
+                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="注释器配置" 
+                                       Classes="title"
+                                       FontSize="16"/>
+                        </StackPanel>
+                        
+                        <TextBlock Text="选择需要清除的注释类型（可多选）"
+                                   FontSize="13"
+                                   Foreground="#7F8C8D"
+                                   Margin="0,0,0,15"/>
+                        
+                        <ListBox SelectionMode="Multiple"
+                                 ItemsSource="{Binding Items}"
+                                 Background="Transparent"
+                                 BorderThickness="0">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="comment-item" Width="180">
+                                        <CheckBox Content="{Binding Comment.Name}" 
+                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                  FontSize="13"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
+                        <!-- 说明区域 -->
+                        <Border Background="#F8F9FA" 
+                                BorderBrush="#E9ECEF" 
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="15"
+                                Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock Text="支持的注释类型" 
+                                           FontWeight="SemiBold"
+                                           Foreground="#495057"
+                                           Margin="0,0,0,10"/>
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,5">
+                                        <Border Width="8" Height="8" CornerRadius="4" Background="#3498DB" Margin="0,0,8,0"/>
+                                        <TextBlock Text="空白行" FontSize="13"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,5">
+                                        <Border Width="8" Height="8" CornerRadius="4" Background="#E74C3C" Margin="0,0,8,0"/>
+                                        <TextBlock Text="HTML注释 &lt;!-- --&gt;" FontSize="13"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,5">
+                                        <Border Width="8" Height="8" CornerRadius="4" Background="#27AE60" Margin="0,0,8,0"/>
+                                        <TextBlock Text="多行注释 /* */" FontSize="13"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,5">
+                                        <Border Width="8" Height="8" CornerRadius="4" Background="#F39C12" Margin="0,0,8,0"/>
+                                        <TextBlock Text="单行注释 //" FontSize="13"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
                         </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-        
-        <!-- 底部区域 -->
-        <StackPanel Grid.Row="1" Margin="40">
-            <TextBlock TextWrapping="Wrap" TextAlignment="Left">
-                <Run Text="目前支持清除四种代码和注释, 选中的注释器才会被应用：" FontWeight="Bold"/>
-            </TextBlock>
-            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 空白行</TextBlock>
-            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• html注释(&lt;!-- 注释内容 --&gt;)</TextBlock>
-            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 多行注释(/* 注释内容 */)</TextBlock>
-            <TextBlock TextWrapping="Wrap" Margin="10,5,0,0">• 单行注释(//注释内容)</TextBlock>
-            
-            
-        </StackPanel>
-        
-        
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 20, 0, 40">
-            <Button Command="{Binding CleanCommand}">清理注释</Button>
-        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 操作按钮区 -->
+                <Border Classes="card" 
+                        BorderBrush="#667EEA40">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                            <GradientStop Offset="0" Color="#667EEA08"/>
+                            <GradientStop Offset="1" Color="#764BA208"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Button Classes="success"
+                                Command="{Binding CleanCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE74E;" 
+                                           FontFamily="Segoe UI Symbol"
+                                           FontSize="18"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock Text="开始清理注释" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Text="请确保已正确配置所有选项后再执行"
+                                   FontSize="12"
+                                   Foreground="#7F8C8D"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
-
 </Window>
